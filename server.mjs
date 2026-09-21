@@ -4,6 +4,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {prepareAnalysis,generateAnalysis} from './analysis.mjs';
 import {createTrialAccess,loginPage} from './trial-access.mjs';
+import {classifyAIError,providerError} from './ai-errors.mjs';
 
 const root=path.join(path.dirname(fileURLToPath(import.meta.url)),'dist');
 const access=createTrialAccess({origin:process.env.PUBLIC_ORIGIN,code:process.env.TRIAL_ACCESS_CODE});
@@ -52,7 +53,7 @@ export const server=http.createServer(async(req,res)=>{
    if(!reserveAI())return json(res,429,{reason:'daily_limit'});
    active++;requests.push(Date.now());
    try{return json(res,200,{mode:'ai',analysis:await generateAnalysis(input,{key,model}),model,time:new Date().toISOString()});}
-   catch{return json(res,502,{reason:'analysis_unavailable'});}finally{active--;}
+   catch(error){const reason=classifyAIError(error);console.warn('[AI analyze]',reason);return json(res,502,{reason});}finally{active--;}
  }
  if(url.pathname==='/api/coach'){
    if(req.method!=='POST')return json(res,405,{error:'method_not_allowed'});
@@ -69,13 +70,13 @@ export const server=http.createServer(async(req,res)=>{
    active++;requests.push(Date.now());
    try{
      const response=await fetch('https://api.openai.com/v1/responses',{method:'POST',headers:{'Authorization':`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,store:false,instructions,input:JSON.stringify(input),max_output_tokens:1200,text:{format:{type:'json_schema',name:'inquiry_coach',strict:true,schema}}}),signal:AbortSignal.timeout(15000)});
-     if(!response.ok)return json(res,502,{mode:'preset',reason:'provider_unavailable'});
+     if(!response.ok)throw await providerError(response);
      const result=await response.json();const output=(result.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('');
      let parsed;try{parsed=JSON.parse(output);}catch{return json(res,502,{mode:'preset',reason:'invalid_response'});}
      const ids=new Set(input.evidence.map(e=>e.id));
      if(typeof parsed.text!=='string'||parsed.text.length>1200||!Array.isArray(parsed.evidenceIds)||!parsed.evidenceIds.every(id=>ids.has(id)))return json(res,502,{mode:'preset',reason:'unverified_evidence'});
      return json(res,200,{mode:'ai',text:parsed.text,evidenceIds:parsed.evidenceIds});
-   }catch{return json(res,502,{mode:'preset',reason:'timeout_or_network'});}finally{active--;}
+   }catch(error){const reason=classifyAIError(error);console.warn('[AI coach]',reason);return json(res,502,{mode:'preset',reason});}finally{active--;}
  }
  if(req.method!=='GET'&&req.method!=='HEAD')return json(res,405,{error:'method_not_allowed'});
  let requested;try{requested=decodeURIComponent(url.pathname);}catch{return json(res,400,{error:'bad_path'});}

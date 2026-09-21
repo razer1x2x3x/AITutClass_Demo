@@ -39,7 +39,10 @@ async function runAnalysis(kind){
  analysisPending.set(kind,key);analysisErrors.delete(kind);updateAnalysisPanels();
  try{
   const res=await fetch('/api/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:key,signal:AbortSignal.timeout(40000)});
-  const data=await res.json();if(!res.ok||data.mode!=='ai')throw Error(data.reason==='daily_limit'?'今日 AI 試用額度已用完，請明天再試。':res.status===429?'目前使用人數較多，請稍後再試。':data.reason==='ai_not_configured'?'AI 尚未啟用。':'暫時無法完成 AI 分析，請稍後重試；原有紀錄已保留。');
+  const data=await res.json();if(!res.ok||data.mode!=='ai'){
+   const messages={daily_limit:'今日 AI 試用額度已用完，請明天再試。',ai_not_configured:'AI 尚未啟用。',trial_login_required:'試用登入已過期，請重新整理並登入。',provider_quota:'OpenAI API 可用額度不足，請網站管理者確認 API 帳務與使用上限。',provider_auth:'AI 金鑰驗證失敗，請網站管理者檢查設定。',provider_model:'目前設定的 AI 模型不存在或無法存取，請網站管理者檢查設定。',provider_permission:'AI 專案權限不足，請網站管理者檢查設定。',provider_rate_limit:'AI 服務目前達到請求上限，請稍後再試。',provider_request:'AI 請求設定不相容，請網站管理者檢查服務紀錄。',provider_unavailable:'AI 服務暫時無法回應，請稍後再試。',analysis_timeout:'AI 分析超過等待時間，請稍後再試。',analysis_network:'網站暫時無法連上 AI 服務，請稍後再試。',analysis_incomplete:'AI 回覆未完成，請網站管理者調整分析設定。',analysis_refused:'AI 無法分析這份內容，請老師協助確認。',analysis_invalid_response:'AI 回覆格式不完整，請重試。'};
+   throw Error((messages[data.reason]||(res.status===429?'目前使用人數較多，請稍後再試。':'暫時無法完成 AI 分析，請稍後重試。'))+' 原有紀錄已保留。');
+  }
   const a=data.analysis;if(!a||typeof a.summary!=='string'||!['observations','explanations','nextSteps','evidenceIds','questionIds'].every(k=>Array.isArray(a[k])&&a[k].every(x=>typeof x==='string')))throw Error('AI 回覆格式不完整，請重試。');
   if(state===owner&&key===analysisKey(kind)){state.aiAnalyses[kind]={key,analysis:a,model:data.model,time:data.time};persist();}
  }catch(error){if(state===owner&&key===analysisKey(kind))analysisErrors.set(kind,error.name==='TimeoutError'?'分析逾時，請稍後重試。':error.message);}

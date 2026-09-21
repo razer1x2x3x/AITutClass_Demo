@@ -1,6 +1,7 @@
 import {createRequire} from 'node:module';
 import {readFile} from 'node:fs/promises';
 import vm from 'node:vm';
+import {aiError,providerError} from './ai-errors.mjs';
 const require=createRequire(import.meta.url),Optics=require('./dist/optics.js'),Analysis=require('./dist/analysis-data.js');
 const context={window:{}};vm.runInNewContext(await readFile(new URL('./dist/content.js',import.meta.url),'utf8'),context);
 const content=context.window.LabContent;
@@ -47,7 +48,8 @@ export function validateAnalysis(value,input){
 }
 export async function generateAnalysis(input,{key,model,fetcher=fetch}){
  const response=await fetcher('https://api.openai.com/v1/responses',{method:'POST',headers:{Authorization:`Bearer ${key}`,'Content-Type':'application/json'},body:JSON.stringify({model,store:false,instructions:analysisInstructions,input:JSON.stringify(input),max_output_tokens:2400,text:{format:{type:'json_schema',name:'learning_analysis',strict:true,schema:analysisSchema}}}),signal:AbortSignal.timeout(35000)});
- if(!response.ok)throw Error('provider_unavailable');const data=await response.json();if(data.status==='incomplete')throw Error('incomplete');
+ if(!response.ok)throw await providerError(response);const data=await response.json();if(data.status==='incomplete')throw aiError('analysis_incomplete');
+ if((data.output||[]).some(x=>(x.content||[]).some(c=>c.type==='refusal')))throw aiError('analysis_refused');
  const output=(data.output||[]).flatMap(x=>x.content||[]).filter(x=>x.type==='output_text').map(x=>x.text).join('');
  const parsed=JSON.parse(output);if(!validateAnalysis(parsed,input))throw Error('invalid_response');return parsed;
 }
