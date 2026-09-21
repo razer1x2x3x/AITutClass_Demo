@@ -53,3 +53,25 @@
 .work-intro{margin:10px 0 0;line-height:1.7}.evidence-task{margin:0 24px 8px;padding:16px 18px;background:#eff4ff;border:1px solid #cedcff;border-radius:12px}.evidence-task p{font-size:.85rem;margin:4px 0 10px}.next-gate{position:relative;display:inline-block}.next-gate .btn:disabled{background:#d5dce8;color:#667188;border-color:#d5dce8;opacity:1;cursor:not-allowed;pointer-events:none}.gate-tooltip{display:none;position:absolute;bottom:calc(100% + 10px);right:0;width:max-content;max-width:min(320px,85vw);padding:10px 14px;border-radius:9px;background:var(--navy);color:white;font-size:.85rem;z-index:5;box-shadow:0 4px 20px #0b1d4a26}.next-gate:has(:disabled):is(:hover,:focus-within) .gate-tooltip{display:block}.next-gate:focus{outline:3px solid var(--electric-blue);outline-offset:4px;border-radius:12px}.saved-reflection{white-space:pre-wrap;overflow-wrap:anywhere}.interactive-stage{overflow-x:auto}.interactive-stage>svg{min-width:700px}.interactive-stage .stage-note{position:sticky;left:0}.discovery-bubble{cursor:pointer;filter:drop-shadow(0 3px 5px #0004)}.discovery-bubble:hover rect,.discovery-bubble:focus rect{fill:#fff9e8;stroke:white;stroke-width:3}.discovery-bubble:focus{outline:none}.tir-cases{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:24px 0}.tir-cases figure{margin:0;min-width:0}.tir-cases svg{width:100%;display:block;border-radius:12px}.tir-cases figcaption{font-size:.85rem;line-height:1.7;padding-top:12px}.tir-cases p{margin-top:8px}#modal:has(#tir-title){width:min(930px,94vw)}@media(max-width:760px){.lab-next .next-gate{width:100%}.tir-cases{grid-template-columns:1fr}.tir-cases figure{max-width:340px;margin:auto}}
 
 .analysis-panel{margin:24px 0;padding:24px;border:1px solid #b8ccff;border-top:4px solid var(--electric-blue,#2f6bff);border-radius:16px;background:#f5f8ff;overflow-wrap:anywhere}.analysis-panel h4{margin:20px 0 8px}.analysis-panel li{margin-bottom:8px}.analysis-notice{margin:18px 0 0;line-height:1.6}.assessment-content{min-width:0}.analysis-panel p{white-space:pre-wrap}@media(max-width:760px){.analysis-panel{padding:18px}.assessment-content fieldset{min-width:0}.assessment-content .choice{overflow-wrap:anywhere}}
+/* Two discoveries, kept beside the title on desktop and mobile. */
+.brand-cluster{display:flex;align-items:center;gap:18px;flex-shrink:0}
+.discovery-stars{display:flex;gap:6px;align-items:center}
+.discovery-star{display:block;width:28px;height:28px}
+.discovery-star svg{display:block;width:100%;height:100%;overflow:visible}
+.discovery-star path{fill:#fff;stroke:#8999b5;stroke-width:2.5;stroke-linejoin:round}
+.discovery-star.collected path{fill:#F6C85F;stroke:#AD7817;filter:drop-shadow(0 1px 3px #f6c85f60)}
+#discovery-celebration{position:fixed;inset:0;margin:0;border:0;border-radius:0;padding:24px;width:100vw;max-width:none;height:100dvh;max-height:none;overflow:hidden;background:transparent;color:#fff;cursor:pointer}
+#discovery-celebration[open]{display:grid;place-items:center;animation:discovery-screen 2.5s ease both}
+#discovery-celebration::backdrop{background:#071735d9;animation:discovery-screen 2.5s ease both}
+.discovery-prize{position:relative;text-align:center;z-index:1}
+#discovery-prize-star{width:clamp(120px,24vw,190px);margin:0 auto 24px;animation:discovery-star-in 2.5s cubic-bezier(.2,.8,.25,1) both}
+#discovery-prize-star svg{width:100%;display:block;overflow:visible;filter:drop-shadow(0 0 24px #f6c85f90)}
+#discovery-prize-star path{fill:#F6C85F;stroke:#fff2bc;stroke-width:1.5;stroke-linejoin:round}
+#discovery-celebration-title{font-size:clamp(1.65rem,5vw,2.2rem);letter-spacing:.06em;margin-bottom:8px;color:#fff8df}
+#discovery-celebration-name{color:#d9e6fc;margin:0;font-size:1.05rem}
+.discovery-glow{position:absolute;left:50%;top:45%;width:min(80vw,540px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle,#f6c85f35 0,transparent 67%)}
+@keyframes discovery-screen{0%{opacity:0}14%,80%{opacity:1}100%{opacity:0}}
+@keyframes discovery-star-in{0%{transform:scale(.45) rotate(-18deg);opacity:0}22%{transform:scale(1.09) rotate(4deg);opacity:1}36%,82%{transform:scale(1) rotate(0);opacity:1}100%{transform:scale(.92);opacity:0}}
+@media(max-width:760px){.brand-cluster{gap:14px}.discovery-star{width:25px;height:25px}.discovery-stars{gap:5px}}
+@media(prefers-reduced-motion:reduce){#discovery-prize-star{animation:none}#discovery-celebration[open],#discovery-celebration::backdrop{animation:discovery-screen 2.5s linear both}}
+@media print{#discovery-celebration{display:none!important}}
