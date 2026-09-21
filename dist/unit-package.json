@@ -1,0 +1,176 @@
+{
+  "unitId": "light-journey-demo-v1",
+  "title": "光的旅行：眼睛看到的都是真的嗎？",
+  "version": "1.3.0",
+  "status": "prototype-unreviewed",
+  "language": "zh-Hant",
+  "stage": "國小第三學習階段",
+  "suggestedMinutes": {
+    "before": 0,
+    "lesson1": 40,
+    "lesson2": 40,
+    "extension": 15,
+    "assessment": 10
+  },
+  "curriculum": {
+    "prerequisite": [
+      "INe-Ⅱ-6"
+    ],
+    "partialCoverage": [
+      "INe-Ⅲ-8",
+      "INe-Ⅲ-7"
+    ],
+    "performanceReference": [
+      "pe-Ⅲ-1",
+      "pe-Ⅲ-2",
+      "pa-Ⅲ-2",
+      "pc-Ⅲ-2"
+    ],
+    "notice": "部分對應，未涵蓋完整放大鏡聚光與成像教學；冊別與進度由出版社核實"
+  },
+  "externalMappings": {
+    "adlNodeId": null,
+    "aiLiteracyIndicator": null,
+    "frameworkVersion": null,
+    "mappingStatus": "pending-verification"
+  },
+  "publisher": {
+    "name": null,
+    "edition": null,
+    "volume": null,
+    "pages": null,
+    "license": null,
+    "status": "original-demo-content"
+  },
+  "technicalLevel": "文字題目可編輯資料；新互動元件需程式設計",
+  "knowledgeRelations": [
+    {
+      "from": "light-straight",
+      "to": "refraction",
+      "relation": "prerequisite"
+    },
+    {
+      "from": "refraction",
+      "to": "color-dispersion",
+      "relation": "extension"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "predict",
+      "goal": "提出可比較的光路猜想",
+      "evidence": "原始猜想與理由"
+    },
+    {
+      "id": "surface",
+      "goal": "固定材料，比較兩種方向",
+      "component": "surface-refraction",
+      "allowedMaterials": [
+        "air",
+        "water",
+        "glass"
+      ],
+      "evidence": "角度、材料、預測、模型結果"
+    },
+    {
+      "id": "compare",
+      "goal": "用兩張不同條件的折射證據描述光路變化",
+      "evidence": "兩個證據 ID、改變條件、光路觀察"
+    },
+    {
+      "id": "design",
+      "goal": "提出可重現的命中配置",
+      "component": "polygon-raytrace",
+      "evidence": "配置、目標、命中、全反射、討論想法"
+    },
+    {
+      "id": "color",
+      "goal": "比較相同條件的白光與單色光",
+      "component": "dispersion-demo",
+      "evidence": "兩種光源配置與發現卡"
+    },
+    {
+      "id": "reflection",
+      "goal": "在我的發現確認或修正完整解釋",
+      "evidence": "確認文字、比較證據 ID",
+      "entry": "notebook"
+    }
+  ],
+  "coach": {
+    "defaultMode": "preset",
+    "aiMode": "optional-server",
+    "scope": "已定義光路及色光模型",
+    "evidenceRequired": false,
+    "fallback": "preset",
+    "sourceIds": [
+      "S1",
+      "S2"
+    ],
+    "notice": "真實 AI 尚待服務端金鑰與模型連線驗證；資料不足使用明確標示的規則提示。",
+    "analysisTasks": [
+      "compare",
+      "assessment",
+      "teacher"
+    ]
+  },
+  "assessment": {
+    "preItems": 0,
+    "postItems": 10,
+    "rubric": [
+      "問題與預測",
+      "比較方法",
+      "證據解釋",
+      "應用與修正"
+    ],
+    "scorePerDimension": [
+      0,
+      1,
+      2
+    ],
+    "authority": "teacher",
+    "teacherReviewRequired": true,
+    "title": "學習驗收",
+    "version": "concepts-10-v1",
+    "entry": "好奇再出發 / 04",
+    "topics": [
+      "折射",
+      "看見物體",
+      "光的行進",
+      "折射與生活",
+      "白光與色散",
+      "虛像",
+      "透鏡與放大",
+      "實驗比較"
+    ]
+  },
+  "sources": [
+    "S1",
+    "S2",
+    "S3",
+    "S4",
+    "S5",
+    "S6",
+    "S7",
+    "S8",
+    "S9"
+  ],
+  "verification": {
+    "planSourceCheckDate": "2026-09-15",
+    "officialApproval": false,
+    "subjectExpertReview": false,
+    "studentTrial": false,
+    "userOperationFeedback": true
+  },
+  "evidencePolicy": {
+    "limit": 20,
+    "scope": "all-active-evidence",
+    "comparisonMinimum": 2,
+    "comparisonType": "surface",
+    "distinctConditions": [
+      "medium",
+      "angle"
+    ],
+    "restoreHonorsLimit": true,
+    "existingRecordsPreserved": true
+  }
+}
