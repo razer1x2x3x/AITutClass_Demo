@@ -10,6 +10,14 @@ test('provider errors distinguish quota, credentials, model and rate limits with
  assert.equal(classifyAIError(new DOMException('secret','TimeoutError')),'analysis_timeout');
  assert.equal(classifyAIError(new TypeError('fetch failed')),'analysis_network');
 });
+test('current billing and spend error codes are not confused with temporary rate limits',async()=>{
+ for(const code of ['credit_balance_exhausted','organization_spend_limit_exceeded','project_spend_limit_exceeded','organization_usage_limit_exceeded']){
+  const error=await providerError({status:429,json:async()=>({error:{code}})});
+  assert.equal(classifyAIError(error),'provider_quota');assert.equal(error.providerCode,code);
+ }
+ const unknown=await providerError({status:429,json:async()=>({error:{code:'secret-value',type:'insufficient_quota'}})});
+ assert.equal(classifyAIError(unknown),'provider_quota');assert.equal(unknown.providerCode,undefined);
+});
 test('analysis preserves upstream failures and distinguishes incomplete output',async()=>{
  const input=prepareAnalysis({kind:'compare',evidence:[{id:'E01',type:'surface',config:{angle:0,medium:'water'}},{id:'E02',type:'surface',config:{angle:35,medium:'water'}}]});
  for(const [response,reason] of [[{ok:false,status:429,json:async()=>({error:{code:'insufficient_quota'}})},'provider_quota'],[{ok:true,json:async()=>({status:'incomplete'})},'analysis_incomplete']]){

@@ -11,11 +11,15 @@ export function classifyAIError(error) {
 export async function providerError(response) {
  const data = await response.json().catch(()=>({}));
  const code = data?.error?.code;
- const reason = code === 'insufficient_quota' ? 'provider_quota'
+ const quotaCodes=['insufficient_quota','credit_balance_exhausted','organization_spend_limit_exceeded','project_spend_limit_exceeded','organization_usage_limit_exceeded'];
+ const reason = quotaCodes.includes(code) || data?.error?.type === 'insufficient_quota' ? 'provider_quota'
   : response.status === 401 ? 'provider_auth'
   : code === 'model_not_found' || response.status === 404 ? 'provider_model'
   : response.status === 403 ? 'provider_permission'
   : response.status === 429 ? 'provider_rate_limit'
   : response.status === 400 ? 'provider_request' : 'provider_unavailable';
- return aiError(reason);
+ const error=aiError(reason);
+ const safeCodes=[...quotaCodes,'invalid_api_key','model_not_found','rate_limit_exceeded','slow_down'];
+ if(safeCodes.includes(code))error.providerCode=code;
+ return error;
 }

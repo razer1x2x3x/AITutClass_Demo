@@ -53,7 +53,7 @@ export const server=http.createServer(async(req,res)=>{
    if(!reserveAI())return json(res,429,{reason:'daily_limit'});
    active++;requests.push(Date.now());
    try{return json(res,200,{mode:'ai',analysis:await generateAnalysis(input,{key,model}),model,time:new Date().toISOString()});}
-   catch(error){const reason=classifyAIError(error);console.warn('[AI analyze]',reason);return json(res,502,{reason});}finally{active--;}
+   catch(error){const reason=classifyAIError(error);console.warn('[AI analyze]',reason,error.providerCode||'');return json(res,502,{reason,providerCode:error.providerCode});}finally{active--;}
  }
  if(url.pathname==='/api/coach'){
    if(req.method!=='POST')return json(res,405,{error:'method_not_allowed'});
